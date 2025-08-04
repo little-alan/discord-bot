@@ -2,6 +2,12 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import random
+from dotenv import load_dotenv
+import os
+
+# 載入 .env 檔案
+load_dotenv()
+TOKEN = os.getenv("DISCORD_TOKEN")
 
 intents = discord.Intents.default()
 intents.members = True
@@ -190,10 +196,11 @@ async def on_member_join(member):
 @app_commands.describe(min="最小值（預設1）", max="最大值（預設6）")
 async def dice(interaction: discord.Interaction, min: int = 1, max: int = 6):
     if min < 1 or max > 100 or min > max:
-        await interaction.response.send_message("請輸入有效的範圍（最小1，最大100，且最大值需大於等於最小值）", ephemeral=True)
+        await interaction.response.send_message("請輸入有效的範圍（1 ≤ min ≤ max ≤ 100）", ephemeral=True)
         return
-    result = random.randint(min, max)
-    await interaction.response.send_message(f"🎲 你擲出了：**{result}**（範圍：{min}~{max}）")
 
-# 啟動機器人（請改用環境變數保護 Token）
-bot.run("你的Token放這，但請盡快用環境變數隱藏")
+    result = random.randint(min, max)
+    await interaction.response.send_message(f"🎲 擲出數字：{result}", ephemeral=True)
+
+# 啟動機器人
+bot.run(TOKEN)
